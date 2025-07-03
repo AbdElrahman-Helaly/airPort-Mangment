@@ -19,6 +19,7 @@ import { ResetPasswordInput } from './dtos/resetPasswordInput';
 import { RequestOtpInput } from './dtos/sendOtpInput';
 import { VerifyOtpInput } from './dtos/verifyOtpInput';
 import { CreateAdminInput } from './dtos/createAdminInput';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class AuthService {
@@ -29,6 +30,7 @@ export class AuthService {
     private userRepo: Repository<User>,
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
+    private readonly mailService: MailService,
   ) {}
 
   async requestOtp(input: RequestOtpInput) {
@@ -50,9 +52,17 @@ export class AuthService {
       isVerified: false,
     });
 
-    console.log(`OTP Sent to ${input.email || input.phone}: ${code}`);
+    if (input.email) {
+      await this.mailService.sendMail(
+        input.email,
+        'Your Registration OTP Code',
+        `<p>Your OTP code is: <b>${code}</b>. It will expire in 5 minutes.</p>`,
+      );
+    }
+
     return 'OTP sent';
   }
+
   async requestResetPassword(input: RequestOtpInput): Promise<string> {
     const user = await this.usersService.findByEmailOrPhone(
       input.email,
@@ -72,7 +82,14 @@ export class AuthService {
       isVerified: false,
     });
 
-    console.log(`OTP sent for reset: ${code}`);
+    if (user.email) {
+      await this.mailService.sendMail(
+        user.email,
+        'Reset Password OTP',
+        `<p>Your reset code is <b>${code}</b>. It will expire in 5 minutes.</p>`,
+      );
+    }
+
     return 'OTP sent successfully';
   }
 

@@ -15,6 +15,7 @@ import { User } from './users/entites/user.entity';
 import { createPassengerLoader } from './loaders/passenger.loader';
 import { createFlightLoader } from './loaders/flight.loader';
 import { BaggageModule } from './baggage/baggage.module';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -63,6 +64,7 @@ import { BaggageModule } from './baggage/baggage.module';
     StaffModule,
     AirportModule,
     BaggageModule,
+    MailModule,
   ],
 })
 export class AppModule {}

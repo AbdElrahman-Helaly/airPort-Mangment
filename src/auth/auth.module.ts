@@ -9,11 +9,13 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './jwtModule/jwt.Strategy';
 import { ConfigService } from '@nestjs/config';
 import { Passenger } from 'src/passengers/entities/passenger.entity';
+import { MailModule } from 'src/mail/mail.module';
 
 @Module({
   imports: [
     UsersModule,
     PassportModule,
+    MailModule,
     TypeOrmModule.forFeature([OTP, Passenger]),
     JwtModule.registerAsync({
       useFactory: async (configService: ConfigService) => ({
